@@ -33,7 +33,7 @@ medistock/
 |---|---|
 | `Product` | id, name, category (enum), unit, minimumStockLevel, requiresColdStorage |
 | `Batch` | id, product, batchNumber, expiryDate, quantity, receivedAt |
-| `Department` | id, name, location, contactPerson |
+| `Department` | id, name, location, contactPerson, hasColdStorage |
 | `StockLevel` | id, product, department, currentQuantity, lastUpdated |
 | `StockMovement` | id, product, batch, fromDepartment, toDepartment, quantity, type (enum), movedAt, movedBy |
 | `Supplier` | id, name, contactEmail, phone, leadTimeDays |
@@ -61,7 +61,7 @@ These are the non-trivial rules that make the domain interesting:
   `product.minimumStockLevel`, a `LOW_STOCK` alert is created and a draft
   `PurchaseOrder` is generated automatically
 - **Cold storage flag:** products with `requiresColdStorage = true` are flagged
-  in the UI and excluded from departments without cold storage capability
+  in the UI and excluded from departments where `hasColdStorage = false`
 - **Transfer validation:** a transfer movement must decrement the source
   department's `StockLevel` and increment the destination's atomically
   (handled in a `@Transactional` service method)
@@ -165,7 +165,10 @@ POST   /api/v1/auth/login                # returns JWT
 - Flyway migrations for schema management
 - Seed data on startup (realistic medical supply dataset)
 - Swagger UI available at `/swagger-ui.html`
-- Runs locally via `docker-compose up`
+- Dockerfile for the Spring Boot app
+- Runs locally via `docker compose up --build`
+- Unit tests for all service methods (JUnit 5 + Mockito), written alongside the code
+- Integration tests for all endpoints (Testcontainers + PostgreSQL), written alongside the code
 
 ### Stage 2 — Quality layer
 - JWT auth with ADMIN and VIEWER roles
@@ -173,12 +176,9 @@ POST   /api/v1/auth/login                # returns JWT
 - Global exception handler (`@ControllerAdvice`) with consistent error response format
 - Scheduled expiry and low-stock alert jobs
 - Auto-generated purchase orders on low stock
-- Unit tests for all service methods (JUnit 5 + Mockito)
-- Integration tests for all endpoints (Testcontainers + PostgreSQL)
 - GitHub Actions CI pipeline
 
 ### Stage 3 — AWS deployment
-- Dockerfile for the Spring Boot app
 - Docker image pushed to AWS ECR via GitHub Actions
 - App deployed to EC2 (t3.micro), PostgreSQL on RDS (db.t3.micro)
 - Environment variables via AWS Parameter Store (no secrets in repo)
