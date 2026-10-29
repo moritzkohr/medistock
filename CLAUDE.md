@@ -88,6 +88,28 @@ Swagger UI: `http://localhost:8080/swagger-ui.html`
   need tests for the normal case and the edge cases.
 - A task is only done when `./mvnw clean verify` passes.
 
+## Code I write myself
+
+These parts are mine to implement. Do not write their implementation code,
+even if a task touches them or they block the next step. When you reach one,
+stop and tell me.
+
+- `Product` and `ProductCategory` (the first entity, sets the pattern)
+- `Batch` and its relationship to `Product` (the first JPA relationship)
+- FEFO batch selection
+- The transactional stock transfer
+- Low-stock detection, including alert and draft purchase order creation
+- Purchase order status transitions
+- `ProductController` (the first controller, sets the pattern)
+
+For these parts you may:
+- Review my code and point out bugs, risks and deviations from the spec
+- Explain concepts or answer questions, without handing me a full solution
+- Write the migration, repository and tests around my code once I'm done
+- Give hints if I ask for them, starting small
+
+Everything else you may implement, following the patterns my code establishes.
+
 ## How to work with me
 
 - **Stay in the current stage.** The spec defines three stages. Don't build
